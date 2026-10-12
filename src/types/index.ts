@@ -39,7 +39,7 @@ export interface IOrderCheck {
 
 }
 
-export interface IOrder {
+export interface IOrder extends IBuyer {
   totalPrice: number
   items: IProduct[]
 }
@@ -53,7 +53,7 @@ export class Communication {
 getAllItems() : Promise<IProductList>{
 return this.api.get<IProductList>('/product');
 }
-sendOrder(buyer: IBuyer, order: IOrder): Promise<IOrderCheck>{
+sendOrder(order: IOrder): Promise<IOrderCheck>{
 return this.api.post<IOrderCheck>('/order', order);
 }
 
