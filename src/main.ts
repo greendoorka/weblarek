@@ -9,8 +9,8 @@ import {
   IBuyer,
   TPayment,
   ValidErrors,
-  Communication,
 } from "./types";
+import { Communication } from "./components/communication";
 import { apiProducts } from "./utils/data";
 import { API_URL } from "./utils/constants";
 import { Api } from "./components/base/Api";
@@ -21,31 +21,31 @@ const catalogue = new Catalogue();
 const api = new Api(API_URL);
 const communication = new Communication(api);
 
-const apiProd = apiProducts;
-
-catalogue.saveItems(apiProd.items);
+catalogue.saveItems(apiProducts.items);
 console.log(catalogue.getItems());
-console.log(catalogue.getIdProduct("854cef69-976d-4c2a-a18c-2aa45046c390"));
-catalogue.saveProduct(apiProd.items[2]);
+console.log(catalogue.getIdProduct(apiProducts.items[2].id));
+catalogue.saveProduct(apiProducts.items[2]);
 console.log(catalogue.getProduct());
 
-cart.addItem(apiProd.items[1]);
+cart.addItem(apiProducts.items[1]);
 console.log(cart.getItemsToBuy());
-cart.addItem(apiProd.items[2]);
+cart.addItem(apiProducts.items[2]);
 console.log(cart.totalPrice(), cart.totalItemsInCart());
-console.log(cart.availableItem("b06cde61-912f-4663-9751-09956c0eed67"));
-cart.removeFromCart(apiProd.items[2]);
-console.log(cart.availableItem("b06cde61-912f-4663-9751-09956c0eed67"));
+console.log(cart.availableItem(apiProducts.items[2].id));
+cart.removeFromCart(apiProducts.items[2]);
+console.log(cart.availableItem(apiProducts.items[1].id));
 cart.clearCart();
 console.log(cart.getItemsToBuy());
 
 buyer.saveInfo("email", "aa@exm.com");
 console.log(buyer.getInfo());
 buyer.saveInfo("phone", "8912345");
-console.log(buyer.isValid(), buyer.validateInfo());
+console.log(buyer.validateInfo());
 buyer.removeInfo();
 console.log(buyer.getInfo());
 
-console.log(communication.getAllItems());
-communication.getAllItems().then((data) => catalogue.saveItems(data.items));
+await communication
+  .getAllItems()
+  .then((data) => catalogue.saveItems(data.items))
+  .catch((e) => console.log("Ошибка при загрузке каталога:", e));
 console.log(catalogue.getItems());

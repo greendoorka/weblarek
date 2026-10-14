@@ -23,7 +23,7 @@ export interface IBuyer {
   address: string;
 }
 
-export type TPayment = "cash" | "online" | null;
+export type TPayment = "cash" | "card";
 
 export type ValidErrors = {
   payment?: "Не выбран вид оплаты";
@@ -43,20 +43,6 @@ export interface IOrderCheck {
 }
 
 export interface IOrder extends IBuyer {
-  totalPrice: number;
+  total: number;
   items: IProduct[];
-}
-
-export class Communication {
-  constructor(api: IApi) {
-    this.api = api;
-  }
-
-  api: IApi;
-  getAllItems(): Promise<IProductList> {
-    return this.api.get<IProductList>("/product");
-  }
-  sendOrder(order: IOrder): Promise<IOrderCheck> {
-    return this.api.post<IOrderCheck>("/order", order);
-  }
 }

@@ -2,7 +2,7 @@ export class Cart {
   constructor() {
     this.itemsToBuy = [];
   }
-  itemsToBuy: IProduct[];
+  private itemsToBuy: IProduct[];
 
   getItemsToBuy(): IProduct[] {
     return this.itemsToBuy;
@@ -21,15 +21,10 @@ export class Cart {
   }
 
   totalPrice(): number {
-    let total = 0;
-    this.itemsToBuy.forEach((el) => {
-      if (el.price !== null && el.price !== undefined) {
-        total += el.price;
-      } else {
-        total += 0;
-      }
-    });
-    return total;
+    return this.itemsToBuy.reduce(
+      (total, item) => total + (item.price || 0),
+      0,
+    );
   }
 
   totalItemsInCart(): number {
