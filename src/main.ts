@@ -10,7 +10,7 @@ import {
   TPayment,
   ValidErrors,
 } from "./types";
-import { Communication } from "./components/communication";
+import { Communication } from "./components/Communication";
 import { apiProducts } from "./utils/data";
 import { API_URL } from "./utils/constants";
 import { Api } from "./components/base/Api";
@@ -46,6 +46,8 @@ console.log(buyer.getInfo());
 
 await communication
   .getAllItems()
-  .then((data) => catalogue.saveItems(data.items))
+  .then((data) => {
+    catalogue.saveItems(data.items);
+    console.log(catalogue.getItems());
+  })
   .catch((e) => console.log("Ошибка при загрузке каталога:", e));
-console.log(catalogue.getItems());

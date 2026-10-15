@@ -193,7 +193,7 @@ this.phone = '',
 this.email = '';
 }
 поля класса:
-payment: 'cash'| 'online' | null,
+payment: TPayment | null,
 address: string,
 phone: string,
 email: string;
@@ -223,4 +223,4 @@ api: IApi
 методы
 getAllItems() : Promise<IProductList> - GET-запрос на сервер, возвращает промис с массивом товаров по интерфейсу IProduct, и общее количество товаров
 
-sendOrder(order: IOrder): Promise<IOrderCheck> - отправляет данные через POST-запрос на сервер. В аргументах первый - покупатель по интерфейсу IBuyer, а второй - заказ в виде массива элементов по интерфесу IProduct, возвращает промис
+sendOrder(order: IOrder): Promise<IOrderCheck> - отправляет данные через POST-запрос на сервер. В аргументах заказ по интерфесу IOrder, возвращает промис по интерфесу IOrderCheck.
