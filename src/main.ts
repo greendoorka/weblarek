@@ -2,7 +2,7 @@ import "./scss/styles.scss";
 import { Catalogue } from "./components/Models/Catalogue";
 import { Cart } from "./components/Models/Cart";
 import { Buyer } from "./components/Models/Buyer";
-import {TPayment, IOrder } from "./types";
+import { TPayment, IOrder } from "./types";
 import { Communication } from "./components/Communication";
 import { API_URL } from "./utils/constants";
 import { Api } from "./components/base/Api";
@@ -63,25 +63,25 @@ events.on("item:chosen", () => {
     events,
   );
   const chosenItem = catalogue.getProduct();
-if(chosenItem){
+  if (chosenItem) {
     const isAlreadyInCart = cart.availableItem(chosenItem.id);
-  const available = chosenItem.price === null;
-  const buttonText = available
-    ? "Недоступно"
-    : isAlreadyInCart
-      ? "Удалить из корзины"
-      : "Купить";
-  const fullCardHtml = fullcardTemp.render({
-    description: chosenItem.description,
-    title: chosenItem.title,
-    price: chosenItem.price,
-    buttonText: buttonText,
-    buttonDisabled: available,
-    image: chosenItem.image,
-    category: chosenItem.category,
-  });
-  modal.render({ content: fullCardHtml });
-}
+    const available = chosenItem.price === null;
+    const buttonText = available
+      ? "Недоступно"
+      : isAlreadyInCart
+        ? "Удалить из корзины"
+        : "Купить";
+    const fullCardHtml = fullcardTemp.render({
+      description: chosenItem.description,
+      title: chosenItem.title,
+      price: chosenItem.price,
+      buttonText: buttonText,
+      buttonDisabled: available,
+      image: chosenItem.image,
+      category: chosenItem.category,
+    });
+    modal.render({ content: fullCardHtml });
+  }
 });
 
 events.on("buyButton:click", () => {
@@ -97,25 +97,23 @@ events.on("buyButton:click", () => {
   }
 });
 
-events.on( "cart:change",
-  () => {
-    header.render({
-      counter: cart.totalItemsInCart(),
+events.on("cart:change", () => {
+  header.render({
+    counter: cart.totalItemsInCart(),
+  });
+  const items = cart.getItemsToBuy().map((item, index) => {
+    return new BasketCard(cloneTemplate<HTMLElement>("#card-basket"), {
+      onClick: () => events.emit("removeButton:click", item),
+    }).render({
+      title: item.title,
+      price: item.price,
+      itemIndex: index + 1,
     });
-    const items = cart.getItemsToBuy().map((item, index) => {
-      return new BasketCard(cloneTemplate<HTMLElement>("#card-basket"), {
-        onClick: () => events.emit("removeButton:click", item),
-      }).render({
-        title: item.title,
-        price: item.price,
-        itemIndex: index + 1,
-      });
-    });
-    const total = cart.totalPrice()
-    const isAvailable = cart.totalItemsInCart() === 0;
-    basketTemp.render({ items: items, total: total, disabled: isAvailable  });
-  },
-);
+  });
+  const total = cart.totalPrice();
+  const isAvailable = cart.totalItemsInCart() === 0;
+  basketTemp.render({ items: items, total: total, disabled: isAvailable });
+});
 
 events.on("basketButton:click", () => {
   const items = cart.getItemsToBuy().map((item, index) => {
@@ -133,8 +131,8 @@ events.on("basketButton:click", () => {
 });
 events.on("removeButton:click", (data: { id: string }) => {
   const product = catalogue.getIdProduct(data.id);
-  if(product){
-  cart.removeFromCart(product);
+  if (product) {
+    cart.removeFromCart(product);
   }
 });
 events.on("order:open", () => {

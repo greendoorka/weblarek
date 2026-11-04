@@ -30,9 +30,9 @@ export class Basket extends Component<IBasket> {
   protected basketBuyButton: HTMLButtonElement;
   protected basketPriceElem: HTMLElement;
 
-protected set disabled(value: boolean){
-  this.basketBuyButton.disabled = value;
-}
+  protected set disabled(value: boolean) {
+    this.basketBuyButton.disabled = value;
+  }
   protected set items(items: HTMLElement[]) {
     this.basketListElem.replaceChildren(...items);
   }
