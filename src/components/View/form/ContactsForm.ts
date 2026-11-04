@@ -1,9 +1,8 @@
 import { Form } from "./Form";
-import { IBuyer } from "../../../types";
+import { TContactsForm } from "../../../types";
 import { ensureElement } from "../../../utils/utils";
 import { IEvents } from "../../base/Events";
 
-type TContactsForm = Pick<IBuyer, 'phone'| 'email'>
 
 export class ContactsForm extends Form<TContactsForm>{
 constructor(container: HTMLElement, events: IEvents){

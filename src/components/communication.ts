@@ -1,3 +1,5 @@
+import { IApi, IProductList, IOrder, IOrderCheck } from "../types";
+
 export class Communication {
   constructor(api: IApi) {
     this.api = api;

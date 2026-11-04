@@ -51,3 +51,48 @@ export interface IFormChange {
   type?: string;
   value?: string;
 }
+export interface IOnAction {
+  onClick?: (event: MouseEvent) => void;
+}
+export interface IBasket {
+  items: HTMLElement[];
+  total: number;
+  disabled: boolean;
+}
+
+export interface IBasketCard extends TCard {
+  itemIndex: number;
+}
+
+export type TCard = Pick<IProduct, "title" | "price" | "category" | "image">;
+
+export interface IFullCard extends TCard {
+  buttonDisabled: boolean;
+  description: string;
+  buttonText: string;
+}
+
+export type TContactsForm = Pick<IBuyer, "phone" | "email">;
+
+export interface IForm {
+  errors: string | undefined;
+  valid: boolean;
+}
+
+export type TOrder = Pick<IBuyer, "address" | "payment">;
+
+export interface IGallery {
+  items: HTMLElement[];
+}
+
+export interface IHeader {
+  counter: number;
+}
+
+export interface IModal {
+  content: HTMLElement;
+}
+
+export interface ISuccessOrder {
+  sinapsDeduct: number;
+}

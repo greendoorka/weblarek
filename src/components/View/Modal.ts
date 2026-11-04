@@ -1,9 +1,7 @@
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
+import { IModal } from "../../types";
 
-interface IModal{
-content: HTMLElement
-}
 export class Modal extends Component<IModal>{
   constructor(container:HTMLElement){
     super(container);

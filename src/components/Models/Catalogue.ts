@@ -1,3 +1,4 @@
+
 import { IEvents } from "../base/Events";
 import { IProduct } from "../../types";
 
@@ -12,9 +13,7 @@ export class Catalogue {
 
   saveItems(newItems: IProduct[]): void {
     this.items = newItems;
-    this.events.emit('catalogue:changed', {
-      items: this.items
-    })
+    this.events.emit('catalogue:changed')
   }
   getItems(): IProduct[] {
     return this.items;
@@ -25,9 +24,7 @@ export class Catalogue {
   }
   saveProduct(item: IProduct): void {
     this.chosenItem = item;
-    this.events.emit('item:chosen',{
-      item: this.chosenItem
-    })
+    this.events.emit('item:chosen')
   }
   getProduct(): IProduct | null {
     return this.chosenItem;

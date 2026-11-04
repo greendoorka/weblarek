@@ -135,17 +135,15 @@ address: string;
 Класс хранит массив всех товаров и выбранный для подробного отображения товар.
 
 конструктор принимает элемент по интерфейсу IEvents и создает пустой массив :
-constructor(events: IEvents){
-this.items = [];
-this.chosenItem = null
-}
+constructor(events: IEvents)
 
 поля класса:
- protected items: IProduct[];
- protected chosenItem: IProduct | null;
+protected items: IProduct[];
+protected chosenItem: IProduct | null;
 protected events: IEvents;
 
 методы
+
 saveItems(newItems: IProduct[]): void - сохранение массива товаров полученного в параметрах метода. В качестве аргумента принимает массив по интерфейсу товара, ничего не возвращает, записывает в Items полученный массив и генерирует событие.
 
 getItems(): IProduct[] - получение массива товаров из модели
@@ -160,10 +158,9 @@ getProduct(): IProduct | null - получение товара для подр�
 
 Хранит массив товаров, выбранных покупателем для покупки.
 
-конструктор создает пустой массив:
-constructor(){
-this.itemsToBuy= [];
-}
+конструктор принимает элемент по интерфейсу IEvents и создает пустой массив :
+constructor(events: IEvents)
+
 поля класса:
 itemsToBuy: IProduct[];
 protected events: IEvents;
@@ -172,7 +169,7 @@ protected events: IEvents;
 
 getItemsToBuy(): IProduct[] - получение массива товаров, которые находятся в корзине.
 
-addToCart(product: IProduct): void - добавление товара, который был получен в параметре, в массив корзины. Принимает в аргумент объект по интерфейсу товара, ничего не возвращает, записывает объект в массив itemsToBuy  и генерирует событие.
+addItem(product: IProduct): void - добавление товара, который был получен в параметре, в массив корзины. Принимает в аргумент объект по интерфейсу товара, ничего не возвращает, записывает объект в массив itemsToBuy и генерирует событие.
 
 removeFromCart(product: IProduct): void - удаление товара, полученного в параметре из массива корзины. Принимает в аргумент объект по интерфейсу товара, ничего не возвращает, убирает объект из массива itemsToBuy и генерирует событие.
 
@@ -188,13 +185,10 @@ availableItem(id: string): boolean -проверка наличия товара
 
 класс с информацией о покупателе
 конструктор создает объект с пустыми значениями:
-constructor(){
-this.payment= null,
-this.address = '',
-this.phone = '',
-this.email = '';
+constructor(events: IEvents){
 }
 поля класса:
+protected events: IEvents;
 private payment: TPayment | null;
 private address: string;
 private phone: string;
@@ -230,17 +224,64 @@ sendOrder(order: IOrder): Promise<IOrderCheck> - отправляет данны
 
 ###### Слой View
 
-###### Интерфейс Хедера
+#### Интерфейсы и типы данных
+
+interface IFormChange {
+field: "payment" | "address" | "email" | "phone";
+type?: string;
+value?: string;
+}
+interface IOnAction {
+onClick?: (event: MouseEvent) => void;
+}
+interface IBasket {
+items: HTMLElement[];
+total: number;
+disabled: boolean;
+}
+
+interface IBasketCard extends TCard {
+itemIndex: number;
+}
+
+type TCard = Pick<IProduct, "title" | "price" | "category" | "image">;
+
+interface IFullCard extends TCard {
+buttonDisabled: boolean
+description: string;
+buttonText: string;
+}
+
+type TContactsForm = Pick<IBuyer, 'phone'| 'email'>
+
+interface IForm {
+errors: string | undefined;
+valid: boolean;
+}
+
+type TOrder = Pick<IBuyer, "address" | "payment">;
+
+interface IGallery {
+items: HTMLElement[];
+}
 
 interface IHeader{
 counter: number;
+}
+
+interface IModal{
+content: HTMLElement
+}
+
+interface ISuccessOrder{
+sinapsDeduct: number;
 }
 
 ###### Класс Header extends Component<IHeader>
 
 Класс отвечает за шапку сайта, является дочерним классом Component с параметром типа IHeader
 
-конструктор принимает события по интерфейсу IEvents и контейнер с типом HTMLElement. вызывает конструктор родителя, находит элемент-счетчик, элемент корзины, устанавливает обработчик событий на корзину
+конструктор принимает события по интерфейсу IEvents и контейнер с типом HTMLElement. вызывает конструктор родителя, находит элемент-счетчик, элемент корзины, устанавливает слушатель событий на корзину
 constructor(events:IEvents, container: HTMLElement)
 
 поля класса
@@ -251,12 +292,6 @@ protected events: IEvents;
 
 методы класса
 protected set counter(value:number) - сеттер принимает число, меняет текст у элемента счетчика;
-
-###### Интерфейс Галереи
-
-interface IGallery {
-items: HTMLElement[]
-}
 
 ###### Класс Gallery extends Component<IGallery>
 
@@ -273,46 +308,39 @@ protected set items(items: HTMLElement[]) - сеттер принимает ма
 
 ###### Класс Card<T = object> extends Component< TCard & T>
 
-Абстрактный Класс карточки товара является 1. дженериком, по умолчанию параметр типа - объект, 2. дочерним классом Component в качестве параметра типа принимает тип TCard и дженерика Т ;
+Абстрактный Класс карточки товара является 1. дженериком, по умолчанию параметр типа - объект, 2. дочерним классом Component в качестве параметра типа принимает тип TCard и дженерика Т
 
-конструктор принимает контейнер с типом HTMLElement, вызывает конструктор родителя, находит элемент названия и элемент ценника
+конструктор принимает контейнер с типом HTMLElement, вызывает конструктор родителя, находит элемент названия и элемент ценника, может найти также элемент-категорию и элемент-картинку
 constructor(container: HTMLElement)
 
 поля класса
 protected container: HTMLElement;
 protected titleElement: HTMLElement;
 protected priceElement: HTMLElement;
-protected _id!: string ;
+protected categoryElem?: HTMLElement;
+protected imgElem?: HTMLImageElement;
 
 методы класса
-protected set title(value: string) - сеттер принимает значение по типу строки и меняет текст элемента-названия
+protected set title(value: string) - сеттер принимает значение по типу строки и меняет текст элемента-названия.
 
-protected set price(value: number) - сеттер принимает значение по типу числа и меняет текст элемента-ценника
+protected set price(value: number) - сеттер принимает значение по типу числа и меняет текст элемента-ценника.
 
-protected set id(value: string) - cеттер принимает строку и устанавливает ID товара в память компонента
+protected set category(value: string): void - сеттер принимает значение по типу строки, проверяет наличие элемента-категории и меняет текст элемента-категории, так же находит класс соответствующий value из categoryMap и добавляет его элементу в разметке.
+
+protected set image(value: string): void - сеттер принимает значение по типу строки, проверяет есть элемент и устанавливает значение в атрибут элемента,так же устанавливает атрибут alt
 
 ###### Класс GalleryCard extends Card<TGalleryCard>
+
 класс карточки товара в галерее является дочерним классом Card, который в качестве параметра типа принимает тип TGalleryCard
 
-конструктор принимает HTML-элемент и параметр по типу IEvents. вызывает конструктор родителя и находит элемент категории и элемент картинки и устанавливает обработчик событий
-constructor(container: HTMLElement, events: IEvents)
+конструктор принимает HTML-элемент и может принять параметр по типу IOnAction. вызывает конструктор родителя и находит элемент категории и элемент картинки и устанавливает слушатель событий, если есть второй параметр
+constructor(container: HTMLElement, action?: IOnAction)
 
 поля класса
-protected currentCategoryClass: string; 
-protected events: IEvents;
-protected container: HTMLElement;
-protected categoryElem: HTMLElement;
-protected imgElem: HTMLElement;
+protected action?: IOnAction
+container: HTMLElement;
 
-методы класса
-protected set category(value: string): void - сеттер принимает значение по типу строки и меняет текст элемента-категории, так же находит класс соответствующий value из categoryMap и добавляет его элементу в разметке.
-
-protected set img(value: string): void - сеттер принимает значение по типу строки, проверяет есть элемент и устанавливает значение в атрибут элемента,так же устанавливает атрибут alt
-###### Интерфейс полной карточки товара
-interface IFullCard extends TGalleryCard{
-  inCart: boolean;
-  description: string;
-}
+методы класса наследуются
 
 ###### Класс FullCard extends Card<IFullCard>
 
@@ -323,69 +351,57 @@ constructor(container: HTMLElement, events: IEvents)
 
 поля класса
 protected events: IEvents;
-protected container: HTMLElement;
 protected descriptionElem: HTMLElement;
-protected buyButtonElem: HTMLButtonElement
-protected isProductInCart: boolean = false;
+protected buyButtonElem:HTMLButtonElement;
+container: HTMLElement
 
 методы класса
 protected set description(value: string)- сеттер принимает значение по типу строки и устанавливает текст элементу-описанию
-protected set inCart(status: boolean) - сеттер принимает значение типа boolean и в зависимости от значения меняет класс кнопки и текст кнопки.
-###### Интерфейс карточки в корзине
-
-interface IBasketCard extends TCard {
-itemIndex: number;
-}
+protected set buttonText(value : string) - сеттер принимает строку в качестве параметра и меняет текст кнопки
+protected set buttonDisabled(value:boolean)- сеттер принимает переменную булева типа, и устанавливает состояние доступности кнопки.
 
 ###### Класс BasketCard extends Card<IBasketCard>
 
 класс карточки товара в корзине является дочерним классом Card с параметром типа IBasketCard
 
-конструктор принимает HTML-элемент и элемент с типом IEvents, вызывает конструктор родителя, так же находит кнопку удалить и элемент с порядковым номером в корзине, подписывается на события
+конструктор принимает HTML-элемент и может принять элемент с типом IOnAction, вызывает конструктор родителя, так же находит кнопку удалить и элемент с порядковым номером в корзине, устанавливает слушатель событий на кнопку, если есть второй параметр
 constructor(container:HTMLElement, events: IEvents)
 
 поля класса
-protected events: IEvents
-protected container: HTMLElement;
+protected action?: IOnAction;
+container: HTMLElement;
 protected removeButton: HTMLButtonElement;
 protected basketItemIndex: HTMLElement;
 
 методы класса
-protected set itemIndex(value: number) - сеттер принимает число и меняет текст в элементе
-
-###### Интерфейс общей формы
-
-interface IForm {
-errors: ValidErrors | null;
-isValid: boolean ;
-}
+protected set itemIndex(value: number) - сеттер принимает число и меняет текст в элементе.
 
 ###### Класс Form<T> extends Component<IForm & T>
 
 Абстрактный класс формы общего вида является дженериком и дочерним классом Component c параметром типа IForm и дженериком
 
-конструктор принимает 2 параметра - 1. HTML-элемент 2. элемент по интерфейсу IEvents. Конструктор находит кнопку, контейнер для ошибок, подписывается на события
+конструктор принимает 2 параметра - HTML-элемент и элемент по интерфейсу IEvents. Конструктор находит кнопку, контейнер для ошибок, подписывается на события
 constructor(container: HTMLElement, events: IEvents)
 
 поля класса
-protected container: HTMLElement;
+container: HTMLElement;
 protected submitButton: HTMLButtonElement;
 protected errorsElem: HTMLElement;
-events: IEvents;
+protected events: IEvents;
 
 методы класса
-protected set isValid(value: boolean) - общий сеттер валидности для форм
-protected set errors(value: string) - общий сеттер текста ошибок
+protected set isValid(value: boolean) - сеттер валидности для форм
+protected set errors(value: string) - сеттер текста ошибок
 
 ###### Класс OrderForm extends Form<TOrder>
 
 Класс формы заказа является дочерним класса Form с параметром типа TOrder
 
-конструктор принимает HTML-элемент и элемент по интерфейсу IEvents,вызывает конструктор родителя, находит элемент кнопки выбора оплаты, элемент ввода адреса, так же устанавливает обработчик событий
+конструктор принимает HTML-элемент и элемент по интерфейсу IEvents,вызывает конструктор родителя, находит элемент кнопки выбора оплаты, элемент ввода адреса, так же устанавливает слушатель событий
 constructor(container: HTMLElement, events: IEvents)
 
 поля класса
-protected container: HTMLElement;
+container: HTMLElement;
 protected events: IEvents;
 protected orderButtons:HTMLButtonElement[];
 protected addressInput: HTMLInputElement;
@@ -394,12 +410,11 @@ protected addressInput: HTMLInputElement;
 protected set payment(value: TPayment | null)- сеттер устанавливает тип оплаты, принимает в качестве аргумента значение по типу TPayment или null
 protected set address(value: string) -сеттер принимает в качестве аргумента строку и устанавливает адрес в форму
 
-
 ###### Класс ContactsForm extends Form<TContactsForm>
 
 класс формы контактов является дочерним классом Form с параметром типа TContactsForm
 
-конструктор принимает HTML-элемент и элемент по интерфейсу IEvents,вызывает конструктор родителя, находит поля ввода телефона и почты,устанавливает обработчик событий.
+конструктор принимает HTML-элемент и элемент по интерфейсу IEvents,вызывает конструктор родителя, находит поля ввода телефона и почты,устанавливает слушатель событий.
 constructor(container: HTMLElement, events: IEvents)
 
 поля класса
@@ -407,21 +422,14 @@ protected emailInput: HTMLInputElement;
 protected phoneInput: HTMLInputElement;
 
 методы класса
-protected set phoneNumber(value: string) - сеттер принимает строку и устанавливает значение в поле ввода телефона
+protected set phone(value: string) - сеттер принимает строку и устанавливает значение в поле ввода телефона
 protected set email (value: string) - сеттер принимает строку и устанавливает значение в поле ввода почты
-
-###### Интерфейс корзины
-
-interface IBasket {
-items: HTMLElement[];
-total: number;
-}
 
 ###### Класс Basket extends Component<IBasket>
 
 класс корзины товаров является дочерним класса Component с параметром типа IBasket
 
-конструктор принимает 2 параметра - HTML-элемент и элемент по типу IEvents, который отвечает за обработчик событий. конструктор находит кнопку "Оформить", список товаров, элемент с подсчетом суммы всех товаров в корзине, устанавливает обработчик событий.
+конструктор принимает 2 параметра - HTML-элемент и элемент по типу IEvents. конструктор находит кнопку "Оформить", элемент списка товаров, элемент с подсчетом суммы всех товаров в корзине, устанавливает слушатель событий.
 constructor(container: HTMLElement,events: IEvents;)
 
 поля класса
@@ -429,15 +437,12 @@ protected events: IEvents;
 protected basketListElem: HTMLElement;
 protected basketBuyButton: HTMLButtonElement;
 protected basketPriceElem: HTMLElement;
+container: HTMLElement
 
 методы класса
-protected set items(item: HTMLElement[]) - сеттер принимает массив элементов c типом HTMLElement, отображает этот список в корзине, если элементов в корзине нет - отображает "Корзина пуста".
+protected set items(item: HTMLElement[]) - сеттер принимает массив элементов c типом HTMLElement, отображает этот массив в корзине.
 protected set total(value:number) - сеттер принимает число и меняет текст в разметке
-###### Интерфейс модального окна
-
-interface IModal{
-content: HTMLElement
-}
+protected set disabled(value: boolean) -сеттер принимает переменную булева типа, и устанавливает состояние доступности кнопки.
 
 ###### Класс Modal extends Component<IModal>
 
@@ -447,7 +452,7 @@ content: HTMLElement
 constructor(container:HTMLElement)
 
 поля класса
-protected container: HTMLElement;
+container: HTMLElement;
 protected closeButtonElement: HTMLButtonElement;
 protected contentElement: HTMLElement;
 protected windowElement: HTMLElement;
@@ -461,12 +466,6 @@ close(): void -метод убирает класс 'modal_active' страни�
 
 render(data?: Partial<IModal>): HTMLElement - метод может принимать элемент по интерфейсу IModal, вызывает метод render родителя, вызывает метод open и возвращает HTML-элемент;
 
-###### Интерфейс подтверждения заказа
-
-interface ISuccessOrder{
-sinapsDeduct: number;
-}
-
 ###### Класс SuccessOrder extends Component<ISuccessOrder>
 
 класс успешно завершенного заказа
@@ -476,52 +475,63 @@ constructor(container: HTMLElement, events: IEvents)
 
 поля класса
 protected events: IEvents;
-protected container: HTMLElement;
+container: HTMLElement;
 protected buttonContinue: HTMLButtonElement;
 protected sinapsDeductElem:HTMLElement;
 
 методы класса
 protected set sinapsDeduct(value: number): void - метод принимает значение по типу числа, устанавливает значение в элемент, в котором указано списание синапсов.
+
 ###### События моделей данных
 
 # события класса Buyer
-buyerForm:change - событие генерируется когда были изменены данные покупателя, используется в методе removeInfo и saveInfo, так же передается объект ошибок валидации типа ValidErrors, при очистке данных передается пустой объект.
-info:removed - событие генерируется в методе removeInfo, когда данные покупателя были удалены.
+
+buyerForm:change - событие генерируется когда были изменены данные покупателя, в событие передается значение поля в котором было изменение.
+info:removed - событие генерируется, когда данные покупателя были удалены.
 
 # События класса Cart
-item:add - cобытие генерируется, когда добавляется товар в корзину, в методе addItem,в событие передается объект с ID товара, которое добавляют, массивом товаров itemsToBuy, и итоговой ценой, которая генерируется методом totalPrice.
-item:remove - cобытие генерируется, когда товар удаляется из корзины, в методе removeFromCart, в событие передается объект с ID товара, которое удаляют, массивом товаров itemsToBuy, и итоговой ценой, которая генерируется методом totalPrice.
-cart:clear - cобытие генерируется, когда корзину полностью очищают, в методе clearCart, в событие передается объект с пустым массивом items и итоговой суммой total со значением 0.
+
+cart:change - cобытие генерируется, когда происходит изменение корзины
+
 # События класса Catalogue
-catalogue:changed - cобытие генерируется, когда произошли изменения каталога, в методе saveItems, в событие передается объект с массивом items.
-item:chosen - cобытие генерируется, когда был выбран товар, в методе saveProduct, в событие передается объект с товаром chosenItem.
+
+catalogue:changed - cобытие генерируется, когда произошли изменения каталога
+
+item:chosen - cобытие генерируется, когда была выбрана карточка товара.
 
 ###### События компонентов View
 
-# События класса BasketCard
-removeButton:click - cобытие генерируется, когда нажата кнопка removeButton, в конструкторе класса в слушателе событий на кнопке removeButton, в событие передается объект с ID карточки товара на котором была эта кнопка
 # События класса FullCard
-buyButton:click - cобытие генерируется,если товара нет в корзине и когда нажата кнопка buyButtonElem, в конструкторе класса в слушателе событий на кнопке buyButtonElem, в событие передается объект с ID карточки товара на котором была эта кнопка
-buyButton:remove -  cобытие генерируется,если товар в корзине и  когда нажата кнопка buyButtonElem, в конструкторе класса в слушателе событий на кнопке buyButtonElem, в событие передается объект с ID карточки товара на котором была эта кнопка
-# События класса GalleryCard
-galleryCard:click - cобытие генерируется, когда нажата карточка товара в галерее, в конструкторе класса в слушателе событий на карточке товара, в событие передается объект с ID карточки товара.
 
-# События класса ContactsForm
-form:changed - событие генерируется при вводе текста в форму,в конструкторе класса в слушателе событий на emailInput и phoneInput, в событие передается объект с полем email или phone и значением emailInput или phoneInput соответственно.
+buyButton:click - cобытие генерируется при нажатии на кнопку 'Купить' и 'Удалить из корзины' на полной карточке товара в конструкторе класса в слушателе событий на кнопке buyButtonElem
+
+# События класса ContactsForm и класса OrderForm
+
+form:changed - событие генерируется при выборе кнопки типа оплаты и при вводе текста в форму,в событие передается объект с полем, которое указывает нажали на кнопку или вводят в форму текст, и значением кнопки на которую нажали или значение поля формы.
 
 # События класса Form
-submit:click - событие генерируется при нажатии на кнопку далее или оформить в формах, в конструкторе класса в слушателе событий на кнопке submitButton, в событие передается объект с именем формы,в которой была эта кнопка.
 
-# События класса OrderForm
-form:changed - событие генерируется при выборе кнопки типа оплаты и при вводе текста в инпут адреса, в конструкторе класса в слушателе событий на кнопках orderButtons и addressInput.  при выборе кнопке в событие передается объект с полем payment и значением кнопки на которую нажали, при вводе адреса в событие передается объект с полем address и значением addressInput.
+submit:click - событие генерируется при нажатии на кнопку далее или оформить в формах,в событие передается объект с именем формы,в которой была эта кнопка.
 
 # События класса Basket
-order:open - событие генерируется при нажатии на кнопку basketBuyButton, в конструкторе класса в слушателе событий на кнопке basketBuyButton
+
+order:open - событие генерируется при нажатии на кнопку basketBuyButton
 
 # События класса Header
-basketButton:click  - событие генерируется при нажатии на кнопку basketButton,в конструкторе класса в слушателе событий на кнопке basketButton.
+
+basketButton:click - событие генерируется при нажатии на кнопку basketButton.
 
 # События класса SuccessOrder
-success:continue - событие генерируется при нажатии на кнопку buttonContinue,в конструкторе класса в слушателе событий на кнопке buttonContinue.
 
+success:continue - событие генерируется при нажатии на кнопку buttonContinue.
+
+# События презентера 
+removeButton:click - cобытие генерируется, когда нажата кнопка removeButton, в событие передается объект с ID карточки товара на котором была эта кнопка . при создании карточек товара в корзине
+
+galleryCard:click - cобытие генерируется, когда нажата карточка товара в галерее, в событие передается объект с ID товара при создании карточек в галерее
 ###### Презентер
+
+Презентер связывает модели данных и их представления через события
+
+Модели данных отвечают за логику.
+Представление данных отвечает за отображение.

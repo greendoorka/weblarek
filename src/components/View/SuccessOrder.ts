@@ -1,10 +1,7 @@
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
-
- interface ISuccessOrder{
-sinapsDeduct: number;
-}
+import { ISuccessOrder } from "../../types";
 
 export class SuccessOrder extends Component<ISuccessOrder>{
 
@@ -23,5 +20,4 @@ protected sinapsDeductElem:HTMLElement;
 protected set sinapsDeduct(value: number){
   this.sinapsDeductElem.textContent = `Списано ${value} синапсов`
 }
-
 }

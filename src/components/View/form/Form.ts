@@ -1,12 +1,7 @@
-import { ValidErrors } from "../../../types";
+import { IForm } from "../../../types";
 import { ensureElement } from "../../../utils/utils";
 import { Component } from "../../base/Component";
 import { IEvents } from "../../base/Events";
-
-interface IForm {
-  errors: ValidErrors | null;
-  valid: boolean;
-}
 
 export abstract class Form<T> extends Component<IForm & T> {
   constructor(
@@ -32,10 +27,11 @@ export abstract class Form<T> extends Component<IForm & T> {
   protected submitButton: HTMLButtonElement;
   protected errorsElem: HTMLElement;
 
-  set valid(value: boolean) {
+  protected set valid(value: boolean) {
     this.submitButton.disabled = !value;
   }
-  set errors(value: string) {
+  protected set errors(value: string) {
     this.errorsElem.textContent = value;
+    
   }
 }

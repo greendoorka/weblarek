@@ -1,10 +1,7 @@
 import { ensureElement, ensureAllElements } from "../../../utils/utils";
 import { Form } from "./Form";
 import { IEvents } from "../../base/Events";
-import { IBuyer } from "../../../types";
-import { TPayment } from "../../../types";
-
-type TOrder = Pick<IBuyer, "address" | "payment">;
+import { TPayment, TOrder} from "../../../types";
 
 export class OrderForm extends Form<TOrder> {
   constructor(container: HTMLElement, events: IEvents) {
@@ -38,12 +35,12 @@ export class OrderForm extends Form<TOrder> {
   protected orderButtons: HTMLButtonElement[];
   protected addressInput: HTMLInputElement;
 
- set payment(value: TPayment | null){
+protected set payment(value: TPayment | null){
     this.orderButtons.forEach((button)=> {
       button.classList.toggle('button_alt-active',button.name === value )
     })
   }
- set address(value: string){
+ protected set address(value: string){
     this.addressInput.value = value;
   }
 }

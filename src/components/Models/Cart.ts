@@ -1,3 +1,6 @@
+import { IProduct } from "../../types";
+import { IEvents } from "../base/Events";
+
 export class Cart {
   private itemsToBuy: IProduct[];
   protected events: IEvents;
@@ -12,28 +15,17 @@ export class Cart {
 
   addItem(product: IProduct): void {
     this.itemsToBuy.push(product);
-    this.events.emit('item:add', {
-      productId: product.id,
-      items: this.itemsToBuy,
-      total: this.totalPrice()
-    });
+    this.events.emit('cart:change');
   }
 
   removeFromCart(product: IProduct): void {
     this.itemsToBuy = this.itemsToBuy.filter((item) => item.id !== product.id);
-   this.events.emit('item:remove', {
-      productId: product.id,
-      items: this.itemsToBuy,
-      total: this.totalPrice()
-    });
+   this.events.emit('cart:change');
   }
 
   clearCart(): void {
     this.itemsToBuy = [];
-    this.events.emit('cart:clear', {
-      items: [],
-      total: 0
-    })
+    this.events.emit('cart:change')
   }
 
   totalPrice(): number {

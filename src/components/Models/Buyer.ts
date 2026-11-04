@@ -1,4 +1,5 @@
 import { IEvents } from "../base/Events";
+import { TPayment, IBuyer, ValidErrors } from "../../types";
 
 export class Buyer {
   constructor(protected events: IEvents) {
