@@ -247,6 +247,5 @@ await communication
   .getAllItems()
   .then((data) => {
     catalogue.saveItems(data.items);
-    console.log(catalogue.getItems());
   })
   .catch((e) => console.log("Ошибка при загрузке каталога:", e));
