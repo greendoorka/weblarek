@@ -1,5 +1,7 @@
+import { IEvents } from "../base/Events";
+
 export class Buyer {
-  constructor() {
+  constructor(protected events: IEvents) {
     this.payment = null;
     this.address = "";
     this.phone = "";
@@ -12,6 +14,7 @@ export class Buyer {
 
   saveInfo<T extends keyof IBuyer>(infoType: T, info: IBuyer[T]): void {
     (this as any)[infoType] = info;
+    this.events.emit('buyerForm:change', {field: infoType});
   }
   getInfo(): IBuyer {
     return {
@@ -26,6 +29,7 @@ export class Buyer {
     this.address = "";
     this.phone = "";
     this.email = "";
+    this.events.emit('info:removed');
   }
   validateInfo(): ValidErrors {
     const errors: ValidErrors = {};

@@ -1,13 +1,20 @@
+import { IEvents } from "../base/Events";
+import { IProduct } from "../../types";
+
 export class Catalogue {
-  constructor() {
+ protected items: IProduct[];
+ protected chosenItem: IProduct | null;
+
+  constructor(protected events: IEvents) {
     this.items = [];
     this.chosenItem = null;
   }
-  items: IProduct[];
-  chosenItem: IProduct | null;
 
   saveItems(newItems: IProduct[]): void {
     this.items = newItems;
+    this.events.emit('catalogue:changed', {
+      items: this.items
+    })
   }
   getItems(): IProduct[] {
     return this.items;
@@ -18,6 +25,9 @@ export class Catalogue {
   }
   saveProduct(item: IProduct): void {
     this.chosenItem = item;
+    this.events.emit('item:chosen',{
+      item: this.chosenItem
+    })
   }
   getProduct(): IProduct | null {
     return this.chosenItem;

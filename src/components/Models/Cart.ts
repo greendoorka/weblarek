@@ -1,23 +1,39 @@
 export class Cart {
-  constructor() {
+  private itemsToBuy: IProduct[];
+  protected events: IEvents;
+
+  constructor(events: IEvents) {
+    this.events = events;
     this.itemsToBuy = [];
   }
-  private itemsToBuy: IProduct[];
-
   getItemsToBuy(): IProduct[] {
     return this.itemsToBuy;
   }
 
   addItem(product: IProduct): void {
     this.itemsToBuy.push(product);
+    this.events.emit('item:add', {
+      productId: product.id,
+      items: this.itemsToBuy,
+      total: this.totalPrice()
+    });
   }
 
   removeFromCart(product: IProduct): void {
-    this.itemsToBuy = this.itemsToBuy.filter((item) => item !== product);
+    this.itemsToBuy = this.itemsToBuy.filter((item) => item.id !== product.id);
+   this.events.emit('item:remove', {
+      productId: product.id,
+      items: this.itemsToBuy,
+      total: this.totalPrice()
+    });
   }
 
   clearCart(): void {
     this.itemsToBuy = [];
+    this.events.emit('cart:clear', {
+      items: [],
+      total: 0
+    })
   }
 
   totalPrice(): number {

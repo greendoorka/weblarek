@@ -27,8 +27,8 @@ export type TPayment = "cash" | "card";
 
 export type ValidErrors = {
   payment?: "Не выбран вид оплаты";
-  email?: "Укажите емэйл";
-  address?: "Укажите адрес";
+  email?: "Введите Email";
+  address?: "Необходимо указать адрес";
   phone?: "Укажите номер телефона";
 };
 
@@ -45,4 +45,9 @@ export interface IOrderCheck {
 export interface IOrder extends IBuyer {
   total: number;
   items: IProduct["id"][];
+}
+export interface IFormChange {
+  field: "payment" | "address" | "email" | "phone";
+  type?: string;
+  value?: string;
 }
