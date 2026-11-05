@@ -4,6 +4,9 @@ import { IEvents } from "../base/Events";
 import { IHeader } from "../../types";
 
 export class Header extends Component<IHeader>{
+protected counterElement: HTMLElement ;
+protected basketButton: HTMLButtonElement ;
+
 
 constructor(protected events:IEvents, protected container: HTMLElement){
 super(container)
@@ -13,8 +16,6 @@ this.basketButton.addEventListener('click', () => {
 this.events.emit('basketButton:click');
 })
 }
-protected counterElement: HTMLElement ;
-protected basketButton: HTMLButtonElement ;
 
 protected set counter(value:number){
 this.counterElement.textContent = `${value}`;

@@ -244,10 +244,12 @@ interface IBasketCard extends TCard {
 itemIndex: number;
 }
 
-type TCard = Pick<IProduct, "title" | "price" | "category" | "image">;
+export type TCard = Pick<IProduct, "title" | "price">;
 
-interface IFullCard extends TCard {
-buttonDisabled: boolean
+export type TGalleryCard = Pick<IProduct, "category" | "image">;
+
+export interface IFullCard extends TGalleryCard {
+buttonDisabled: boolean;
 description: string;
 buttonText: string;
 }
@@ -317,36 +319,35 @@ constructor(container: HTMLElement)
 protected container: HTMLElement;
 protected titleElement: HTMLElement;
 protected priceElement: HTMLElement;
-protected categoryElem?: HTMLElement;
-protected imgElem?: HTMLImageElement;
 
 методы класса
 protected set title(value: string) - сеттер принимает значение по типу строки и меняет текст элемента-названия.
 
 protected set price(value: number) - сеттер принимает значение по типу числа и меняет текст элемента-ценника.
 
-protected set category(value: string): void - сеттер принимает значение по типу строки, проверяет наличие элемента-категории и меняет текст элемента-категории, так же находит класс соответствующий value из categoryMap и добавляет его элементу в разметке.
-
-protected set image(value: string): void - сеттер принимает значение по типу строки, проверяет есть элемент и устанавливает значение в атрибут элемента,так же устанавливает атрибут alt
-
 ###### Класс GalleryCard extends Card<TGalleryCard>
 
 класс карточки товара в галерее является дочерним классом Card, который в качестве параметра типа принимает тип TGalleryCard
 
-конструктор принимает HTML-элемент и может принять параметр по типу IOnAction. вызывает конструктор родителя и находит элемент категории и элемент картинки и устанавливает слушатель событий, если есть второй параметр
+конструктор принимает HTML-элемент и может принять параметр по типу IOnAction. вызывает конструктор родителя, находит элемент категории и элемент картинки и устанавливает слушатель событий, если есть второй параметр
 constructor(container: HTMLElement, action?: IOnAction)
 
 поля класса
 protected action?: IOnAction
 container: HTMLElement;
+protected categoryElem: HTMLElement;
+protected imgElem: HTMLImageElement;
 
-методы класса наследуются
+методы класса
+protected set category(value: string): void - сеттер принимает значение по типу строки и меняет текст элемента-категории, так же находит класс соответствующий value из categoryMap и добавляет его элементу в разметке.
+
+protected set image(value: string): void - сеттер принимает значение по типу строки и устанавливает значение в атрибут элемента-картинки,так же устанавливает атрибут alt
 
 ###### Класс FullCard extends Card<IFullCard>
 
 класс полной карточки товара является дочерним класса Card с параметром типа IFullCard;
 
-конструктор принимает HTML-элемент и параметр по типу IEvents. Вызывает конструктор родителя, находит элемент-описание, кнопку покупки,устанавливает обработчик событий.
+конструктор принимает HTML-элемент и параметр по типу IEvents. Вызывает конструктор родителя,находит элемент категории и элемент картинки, элемент-описание, кнопку покупки,устанавливает обработчик событий.
 constructor(container: HTMLElement, events: IEvents)
 
 поля класса
@@ -354,11 +355,19 @@ protected events: IEvents;
 protected descriptionElem: HTMLElement;
 protected buyButtonElem:HTMLButtonElement;
 container: HTMLElement
+protected categoryElem: HTMLElement;
+protected imgElem: HTMLImageElement;
 
 методы класса
 protected set description(value: string)- сеттер принимает значение по типу строки и устанавливает текст элементу-описанию
+
 protected set buttonText(value : string) - сеттер принимает строку в качестве параметра и меняет текст кнопки
+
 protected set buttonDisabled(value:boolean)- сеттер принимает переменную булева типа, и устанавливает состояние доступности кнопки.
+
+protected set category(value: string): void - сеттер принимает значение по типу строки и меняет текст элемента-категории, так же находит класс соответствующий value из categoryMap и добавляет его элементу в разметке.
+
+protected set image(value: string): void - сеттер принимает значение по типу строки и устанавливает значение в атрибут элемента,так же устанавливает атрибут alt
 
 ###### Класс BasketCard extends Card<IBasketCard>
 
@@ -486,8 +495,7 @@ protected set sinapsDeduct(value: number): void - метод принимает 
 
 # события класса Buyer
 
-buyerForm:change - событие генерируется когда были изменены данные покупателя, в событие передается значение поля в котором было изменение.
-info:removed - событие генерируется, когда данные покупателя были удалены.
+buyerForm:change - событие генерируется когда были изменены данные покупателя.
 
 # События класса Cart
 
@@ -525,10 +533,12 @@ basketButton:click - событие генерируется при нажати
 
 success:continue - событие генерируется при нажатии на кнопку buttonContinue.
 
-# События презентера 
+# События презентера
+
 removeButton:click - cобытие генерируется, когда нажата кнопка removeButton, в событие передается объект с ID карточки товара на котором была эта кнопка . при создании карточек товара в корзине
 
 galleryCard:click - cобытие генерируется, когда нажата карточка товара в галерее, в событие передается объект с ID товара при создании карточек в галерее
+
 ###### Презентер
 
 Презентер связывает модели данных и их представления через события

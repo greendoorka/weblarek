@@ -4,6 +4,9 @@ import { ensureElement } from "../../../utils/utils";
 import { IEvents } from "../../base/Events";
 
 export class ContactsForm extends Form<TContactsForm> {
+  protected emailInput: HTMLInputElement;
+  protected phoneInput: HTMLInputElement;
+
   constructor(container: HTMLElement, events: IEvents) {
     super(container, events);
     this.emailInput = ensureElement<HTMLInputElement>(
@@ -28,10 +31,6 @@ export class ContactsForm extends Form<TContactsForm> {
       });
     });
   }
-
-  protected emailInput: HTMLInputElement;
-  protected phoneInput: HTMLInputElement;
-
   protected set phone(value: string) {
     this.phoneInput.value = value;
   }

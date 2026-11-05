@@ -35,7 +35,11 @@ const orderTempl = new OrderForm(cloneTemplate("#order"), events);
 const modal = new Modal(ensureElement(".modal"));
 const gallery = new Gallery(ensureElement<HTMLElement>(".gallery"));
 const header = new Header(events, ensureElement(".header"));
-
+const fullcardTemp = new FullCard(
+  cloneTemplate<HTMLElement>("#card-preview"),
+  events,
+);
+events.onAll(({ eventName }) => console.log("Событие:", eventName));
 events.on("catalogue:changed", () => {
   const galleryCards = catalogue.getItems().map((item) => {
     return new GalleryCard(cloneTemplate<HTMLElement>("#card-catalog"), {
@@ -58,10 +62,6 @@ events.on("galleryCard:click", (data: { id: string }) => {
 });
 
 events.on("item:chosen", () => {
-  const fullcardTemp = new FullCard(
-    cloneTemplate<HTMLElement>("#card-preview"),
-    events,
-  );
   const chosenItem = catalogue.getProduct();
   if (chosenItem) {
     const isAlreadyInCart = cart.availableItem(chosenItem.id);
@@ -90,7 +90,7 @@ events.on("buyButton:click", () => {
     if (cart.availableItem(product.id)) {
       cart.removeFromCart(product);
       modal.close();
-    } else if (product && product.price !== null) {
+    } else if (product.price !== null) {
       cart.addItem(product);
       modal.close();
     }
@@ -116,19 +116,10 @@ events.on("cart:change", () => {
 });
 
 events.on("basketButton:click", () => {
-  const items = cart.getItemsToBuy().map((item, index) => {
-    return new BasketCard(cloneTemplate<HTMLElement>("#card-basket"), {
-      onClick: () => events.emit("removeButton:click", { id: item.id }),
-    }).render({
-      title: item.title,
-      price: item.price,
-      itemIndex: index + 1,
-    });
-  });
-  const total = cart.totalPrice();
-  const basket = basketTemp.render({ items, total });
+  const basket = basketTemp.render();
   modal.render({ content: basket });
 });
+
 events.on("removeButton:click", (data: { id: string }) => {
   const product = catalogue.getIdProduct(data.id);
   if (product) {
@@ -156,54 +147,46 @@ events.on("form:changed", (data: IFormChange) => {
     buyer.saveInfo("phone", data.value);
   }
 });
-events.on("buyerForm:change", (data: { field: string }) => {
+events.on("buyerForm:change", () => {
   const errors = buyer.validateInfo();
   const info = buyer.getInfo();
-
-  if (!data || data.field === "payment" || data.field === "address") {
-    const orderErrors = [];
-    if (errors.payment) {
-      orderErrors.push(errors.payment);
-    }
-
-    if (errors.address) {
-      orderErrors.push(errors.address);
-    }
-
-    orderTempl.render({
-      errors: orderErrors.join(", "),
-    });
-
-    const isOrderValid = !!info.payment && !!info.address.trim();
-
-    orderTempl.render({
-      valid: isOrderValid,
-      payment: info.payment,
-      address: info.address,
-    });
+  const orderErrors = [];
+  if (errors.payment) {
+    orderErrors.push(errors.payment);
+  }
+  if (errors.address) {
+    orderErrors.push(errors.address);
   }
 
-  if (data.field === "email" || data.field === "phone") {
-    const contactsErrors = [];
-    if (errors.email) {
-      contactsErrors.push(errors.email);
-    }
-    if (errors.phone) {
-      contactsErrors.push(errors.phone);
-    }
-    contactsTempl.render({
-      errors: contactsErrors.join(", "),
-    });
+  orderTempl.render({
+    errors: orderErrors.join(", "),
+  });
 
-    const info = buyer.getInfo();
-    const isContactsValid = !!info.email?.trim() && !!info.phone?.trim();
+  const isOrderValid = orderErrors.length === 0;
 
-    contactsTempl.render({
-      valid: isContactsValid,
-      email: info.email,
-      phone: info.phone,
-    });
+  orderTempl.render({
+    valid: isOrderValid,
+    payment: info.payment,
+    address: info.address,
+  });
+  const contactsErrors = [];
+  if (errors.email) {
+    contactsErrors.push(errors.email);
   }
+  if (errors.phone) {
+    contactsErrors.push(errors.phone);
+  }
+  contactsTempl.render({
+    errors: contactsErrors.join(", "),
+  });
+
+  const isContactsValid = contactsErrors.length === 0;
+
+  contactsTempl.render({
+    valid: isContactsValid,
+    email: info.email,
+    phone: info.phone,
+  });
 });
 
 events.on("submit:click", (data: { formName: string }) => {
@@ -237,10 +220,6 @@ events.on("submit:click", (data: { formName: string }) => {
 });
 events.on("success:continue", () => {
   modal.close();
-});
-events.on("info:removed", () => {
-  contactsTempl.render({ valid: false, email: "", phone: "" });
-  orderTempl.render({ valid: false, payment: null, address: "" });
 });
 
 await communication

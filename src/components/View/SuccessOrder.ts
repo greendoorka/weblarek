@@ -5,6 +5,9 @@ import { ISuccessOrder } from "../../types";
 
 export class SuccessOrder extends Component<ISuccessOrder>{
 
+protected buttonContinue: HTMLButtonElement;
+protected sinapsDeductElem:HTMLElement;
+
 constructor(container: HTMLElement,protected events: IEvents){
 super(container)
 this.buttonContinue = ensureElement<HTMLButtonElement>('.order-success__close',this.container);
@@ -13,9 +16,6 @@ this.buttonContinue.addEventListener('click', ()=>{
   this.events.emit('success:continue')
 })
 }
-
-protected buttonContinue: HTMLButtonElement;
-protected sinapsDeductElem:HTMLElement;
 
 protected set sinapsDeduct(value: number){
   this.sinapsDeductElem.textContent = `Списано ${value} синапсов`

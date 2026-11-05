@@ -3,6 +3,10 @@ import { Component } from "../base/Component";
 import { IModal } from "../../types";
 
 export class Modal extends Component<IModal>{
+  protected closeButtonElement: HTMLButtonElement;
+  protected contentElement: HTMLElement;
+  protected windowElement: HTMLElement;
+
   constructor(container:HTMLElement){
     super(container);
     this.closeButtonElement = ensureElement<HTMLButtonElement>('.modal__close', this.container);
@@ -14,9 +18,6 @@ export class Modal extends Component<IModal>{
     this.windowElement.addEventListener('click', (event) => event.stopPropagation());
 
   }
-  protected closeButtonElement: HTMLButtonElement;
-  protected contentElement: HTMLElement;
-  protected windowElement: HTMLElement;
 
 protected set content(value: HTMLElement){
   this.contentElement.replaceChildren(value);

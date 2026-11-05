@@ -64,9 +64,11 @@ export interface IBasketCard extends TCard {
   itemIndex: number;
 }
 
-export type TCard = Pick<IProduct, "title" | "price" | "category" | "image">;
+export type TCard = Pick<IProduct, "title" | "price">;
 
-export interface IFullCard extends TCard {
+export type TGalleryCard = Pick<IProduct, "category" | "image">;
+
+export interface IFullCard extends TGalleryCard {
   buttonDisabled: boolean;
   description: string;
   buttonText: string;

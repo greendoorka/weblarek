@@ -4,6 +4,9 @@ import { IEvents } from "../../base/Events";
 import { TPayment, TOrder} from "../../../types";
 
 export class OrderForm extends Form<TOrder> {
+  protected orderButtons: HTMLButtonElement[];
+  protected addressInput: HTMLInputElement;
+
   constructor(container: HTMLElement, events: IEvents) {
     super(container, events);
     this.orderButtons = ensureAllElements<HTMLButtonElement>(
@@ -31,9 +34,6 @@ export class OrderForm extends Form<TOrder> {
       });
     });
   }
-
-  protected orderButtons: HTMLButtonElement[];
-  protected addressInput: HTMLInputElement;
 
 protected set payment(value: TPayment | null){
     this.orderButtons.forEach((button)=> {

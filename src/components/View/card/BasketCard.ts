@@ -3,6 +3,10 @@ import { ensureElement } from "../../../utils/utils";
 import { IOnAction, IBasketCard  } from "../../../types";
 
 export class BasketCard extends Card<IBasketCard> {
+
+  protected removeButton: HTMLButtonElement;
+  protected basketItemIndex: HTMLElement;
+
   constructor(
     container: HTMLElement,
     protected action?: IOnAction,
@@ -22,10 +26,7 @@ export class BasketCard extends Card<IBasketCard> {
     }
   }
 
-  protected removeButton: HTMLButtonElement;
-  protected basketItemIndex: HTMLElement;
-
-  set itemIndex(value: number) {
+  protected set itemIndex(value: number) {
     this.basketItemIndex.textContent = `${value}`;
   }
 }

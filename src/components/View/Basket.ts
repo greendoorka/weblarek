@@ -4,6 +4,10 @@ import { IEvents } from "../base/Events";
 import { IBasket } from "../../types";
 
 export class Basket extends Component<IBasket> {
+  protected basketListElem: HTMLElement;
+  protected basketBuyButton: HTMLButtonElement;
+  protected basketPriceElem: HTMLElement;
+
   constructor(
     container: HTMLElement,
     protected events: IEvents,
@@ -25,11 +29,6 @@ export class Basket extends Component<IBasket> {
       events.emit("order:open");
     });
   }
-
-  protected basketListElem: HTMLElement;
-  protected basketBuyButton: HTMLButtonElement;
-  protected basketPriceElem: HTMLElement;
-
   protected set disabled(value: boolean) {
     this.basketBuyButton.disabled = value;
   }
