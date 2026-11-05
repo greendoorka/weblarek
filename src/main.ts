@@ -39,7 +39,6 @@ const fullcardTemp = new FullCard(
   cloneTemplate<HTMLElement>("#card-preview"),
   events,
 );
-events.onAll(({ eventName }) => console.log("Событие:", eventName));
 events.on("catalogue:changed", () => {
   const galleryCards = catalogue.getItems().map((item) => {
     return new GalleryCard(cloneTemplate<HTMLElement>("#card-catalog"), {
